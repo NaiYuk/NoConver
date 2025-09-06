@@ -15,7 +15,7 @@ export default function Page() {
       </header>
 
       {/* ログインフォーム */}
-      <div className="min-h-screen flex flex-col bg-blue-100">
+      <div className="min-h-screen flex flex-col bg-rose-50">
         <main className="flex-1 grid place-items-center  p-4">
           <section
             aria-labelledby="login-title"
