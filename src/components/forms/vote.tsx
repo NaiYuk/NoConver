@@ -11,7 +11,7 @@ const proposals = [
   { value: "3", label: "案C：新しいツールの導入", recommended: false },
 ];
 
-export default function vote() {
+export default function Vote() {
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
       {/* ヘッダー */}
