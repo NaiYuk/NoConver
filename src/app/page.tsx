@@ -1,9 +1,11 @@
+'use client';
 import Link from "next/link";
+import { useRouter } from 'next/navigation';
 
 // ヘッダーとログイン画面
 export default function Page() {
+  const router = useRouter();
   return (
-
     <div className="min-h-dvh flex flex-col">
       {/* ヘッダー */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-gray-300 shadow-sm bg-white/70 backdrop-blur-sm">
@@ -13,7 +15,7 @@ export default function Page() {
       </header>
 
       {/* ログインフォーム */}
-      <div className="min-h-screen flex flex-col bg-blue-100">
+      <div className="min-h-screen flex flex-col bg-rose-50">
         <main className="flex-1 grid place-items-center  p-4">
           <section
             aria-labelledby="login-title"
@@ -47,11 +49,13 @@ export default function Page() {
             />
 
             {/* 送信ボタン */}
+            
             <div className="mt-6">
               <button
-                type="submit"
+                type="button"  // ← submit にしない
+                onClick={() => router.push('/dashboard')}
                 className="w-full rounded-md bg-blue-600 px-4 py-2 text-white
-               hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                   hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-200"
               >
                 送信
               </button>
