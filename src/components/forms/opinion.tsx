@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const userName = "高魚 桐季"; // とりあえず仮データ
 
-export default function opinion() {
+export default function Opinion() {
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
       {/* ヘッダー */}
@@ -110,3 +110,4 @@ export default function opinion() {
     </div>
   );
 }
+
