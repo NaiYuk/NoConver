@@ -128,10 +128,13 @@ export default function Home() {
             </div>
           )}
 
-          {/* 中央のボタン */}
-          <button type="button" className="w-full py-6 text-2xl rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition">
+          {/* 議題の作成と参加のボタン */}
+          <Link
+            href="/dashboard/addproject"
+            className="block w-full py-6 text-2xl rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-center"
+          >
             議題を作成
-          </button>
+          </Link>
 
           <button
             type="button"
