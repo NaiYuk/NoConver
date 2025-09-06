@@ -15,7 +15,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: '意見データが空です' }, { status: 400 });
     }
 
-    const ANALYSIS_PROMPT = `
+const ANALYSIS_PROMPT = `
 あなたは会議促進のプロフェッショナルです。
 以下の議題と意見群を分析し、次の形式で**簡潔なJSON**を出力してください。
 ※出力は必ずJSON形式、各項目は最大50字以内、全体で500字以内に収めてください。
@@ -29,16 +29,17 @@ export async function POST(req: Request) {
     "中立/その他": ["意見4"]
   },
   "解決策候補": [
-    {"案": "A", "メリット": "短く", "デメリット": "短く"},
-    {"案": "B", "メリット": "短く", "デメリット": "短く"},
-    {"案": "C", "メリット": "短く", "デメリット": "短く"}
-  ],
-  "推奨案": {"案": "A", "理由": "短く"}
+    {"案": "1", "メリット": "短く", "デメリット": "短く", "推奨": true},
+    {"案": "2", "メリット": "短く", "デメリット": "短く", "推奨": false},
+    {"案": "3", "メリット": "短く", "デメリット": "短く", "推奨": false}
+  ]
 }
 
-【議題例】
-- 賛否型: 「社内に喫煙室を設けるべきか？」
-- 多角的検討型: 「次期プロジェクト管理ツールを何にするか？」
+【ルール】
+- "推奨" は必ず1つだけ true とし、残りは false。
+- "案" は1/2/3のように簡潔に。
+- 出力は必ず有効なJSON。
+- 各項目は最大50字以内。
 
 議題:
 ${topic}
@@ -46,6 +47,7 @@ ${topic}
 意見データ:
 ${opinions.join('\n')}
 `;
+
 
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
     const result = await model.generateContent(ANALYSIS_PROMPT);
