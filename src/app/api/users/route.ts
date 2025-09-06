@@ -37,4 +37,21 @@ export async function POST(req: Request) {
         console.error(e);
         return NextResponse.json({ ok: false, error: "サーバーエラー" }, { status: 500 });
     }
+
+    
+}
+
+export async function GET() {
+  try {
+    const userId = 1; // 仮ユーザーID。ここを変えると別のユーザーにできる
+    const rows = await query<{ name: string }>(
+      "SELECT name FROM users WHERE id = ?",
+      [userId]
+    );
+    const name = rows[0]?.name ?? "ゲスト";
+    return NextResponse.json({ name });
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ name: "ゲスト", error: "取得失敗" });
+  }
 }
