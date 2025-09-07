@@ -10,13 +10,6 @@ export default async function Home() {
   const session = await getServerSession(authOptions);
   if (!session) return redirect("/dashboard/login");
 
-  const userId = Number(session.user?.id);
-  const rows = await query<{ user: string }>(
-    "SELECT name FROM users WHERE id = ?",
-    [userId]
-  );
-  const userName = rows[0]?.user ?? "ゲスト";
-
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
       <AppHeader />
@@ -26,7 +19,7 @@ export default async function Home() {
             href="/dashboard/createProject"
             className="w-full text-center py-6 text-2xl rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
           >
-            議題を作成（{userName}）
+            議題を作成
           </Link>
           <Link
             href="/dashboard/selectProject"
