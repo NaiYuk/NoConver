@@ -1,0 +1,83 @@
+"use client";
+import { useState } from "react";
+import Image from "next/image";
+import AppHeader from "../AppHeader";
+
+const userName = "高魚 桐季"; // とりあえず仮データ
+
+export default function OpinionComp() {
+  return (
+    <div className="min-h-screen flex flex-col bg-rose-50">
+      {/* ヘッダー */}
+      <AppHeader />
+
+      {/* 議題フォームUI */}
+      <main className="flex flex-1 justify-center items-center w-full">
+        <div className="flex w-full max-w-6xl h-[600px] bg-white rounded-xl shadow-lg border overflow-hidden">
+          {/* 左側：意見一覧 */}
+          <aside className="w-1/3 bg-gray-50 border-r flex flex-col p-6 overflow-y-auto">
+            <h2 className="text-lg font-bold mb-4 text-gray-700">
+              みんなの意見
+            </h2>
+            <ul className="flex flex-col gap-4">
+              {/* 仮データ例 */}
+              <li className="bg-white rounded-md p-4 shadow border">
+                <span className="font-semibold text-green-600">山田太郎：</span>
+                <span>もっと効率的な進め方が必要だと思います。</span>
+              </li>
+              <li className="bg-white rounded-md p-4 shadow border">
+                <span className="font-semibold text-green-600">佐藤花子：</span>
+                <span>新しいツールの導入を検討したいです。</span>
+              </li>
+              {/* ...他の意見... */}
+            </ul>
+          </aside>
+
+          {/* 右側：議題名と意見入力 */}
+          <section className="flex-1 flex flex-col justify-between p-10">
+            {/* 右上：議題名 */}
+            <div className="px-8 pt-8 pb-4 border-b border-gray-100">
+              <label
+                htmlFor="title"
+                className="block text-lg font-bold mb-2 text-blue-700"
+              >
+                議題名
+              </label>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                value="新しいプロジェクトについて"
+                readOnly
+                className="w-full rounded-lg border border-blue-200 px-6 py-4 text-xl bg-blue-50 font-semibold text-blue-800 outline-none"
+              />
+            </div>
+
+            {/* 右下：意見入力フォーム */}
+            <form className="mt-auto flex flex-col gap-4">
+              <label
+                htmlFor="content"
+                className="block text-lg font-bold mb-2 text-gray-700"
+              >
+                あなたの意見
+              </label>
+              {/* 自分の意見を表示 */}
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mt-2 text-blue-800 font-semibold">
+                とても良いアイデアだと思います！
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  className="px-8 py-3 rounded-md bg-blue-600 text-white text-lg font-semibold hover:bg-blue-700 transition"
+                  // AIの結果表示の処理は必要に応じて追加
+                >
+                  AIの案を表示
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </main>
+    </div>
+  );
+}
