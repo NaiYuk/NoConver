@@ -1,3 +1,4 @@
+// src/app/dashboard/login/page.tsx
 'use client';
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
@@ -5,13 +6,14 @@ import Image from "next/image";
 import { useState } from "react";
 import App from "next/app";
 import AppHeader from "@/components/AppHeader";
+import { signIn } from "next-auth/react";
 
 export default function Page() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
   const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
+  const [err,   setErr] = useState<string | null>(null);
 
   const handleCreate = async () => {
     setErr(null);
@@ -19,14 +21,30 @@ export default function Page() {
 
     try {
       setLoading(true);
+
+      // 1) ユーザー作成
       const res = await fetch("/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, pass }), // ← APIへ渡す
+        body: JSON.stringify({ name, pass }),
       });
       const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data?.error ?? "登録に失敗しました");
-      router.push("/dashboard");
+      if (!res.ok || !data?.ok) throw new Error(data?.error ?? "登録に失敗しました");
+
+      // 2) 作成後すぐログイン（authOptions.credentials のキーに合わせる：user / pass）
+      const result = await signIn("credentials", {
+        redirect: false,
+        name,
+        pass,
+      });
+
+      if (result?.error) {
+        // ここに来たらログイン失敗（パスワードハッシュ設定や authOptions を確認）
+        throw new Error(result.error);
+      }
+
+      // 3) 認証つきページへ
+      router.replace("/dashboard"); // replaceにして戻るボタンで戻れないように
     } catch (e: any) {
       setErr(e.message ?? "エラーが発生しました");
     } finally {
