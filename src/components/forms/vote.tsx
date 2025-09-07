@@ -1,4 +1,7 @@
+"use client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const userName = "高魚 桐季"; // とりあえず仮データ
 const proposals = [
@@ -6,20 +9,14 @@ const proposals = [
     value: "1",
     label: "案A：リモートワークの導入",
     recommended: true,
-    pros: [
-      "通勤時間の削減で生産性向上",
-      "柔軟な働き方でワークライフバランス改善",
-    ],
+    pros: ["通勤時間の削減で生産性向上", "柔軟な働き方でワークライフバランス改善"],
     cons: ["コミュニケーション不足の懸念", "セキュリティ管理の強化が必要"],
   },
   {
     value: "2",
     label: "案B：オフィスのレイアウト変更",
     recommended: false,
-    pros: [
-      "協働スペース拡大でチーム連携が向上",
-      "オフィスの雰囲気改善でモチベーションアップ",
-    ],
+    pros: ["協働スペース拡大でチーム連携が向上", "オフィスの雰囲気改善でモチベーションアップ"],
     cons: ["改装コストが高い", "工事期間中の業務効率低下"],
   },
   {
@@ -32,34 +29,23 @@ const proposals = [
 ];
 
 export default function Vote() {
+  const router = useRouter();                 // ✅ フックは関数内で
+  const [selected, setSelected] = useState<string | null>(null);
+
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
       {/* ヘッダー */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-gray-300 shadow-sm bg-white/70 backdrop-blur-sm">
         <div className="flex">
-          <Image
-            src="/no-meeting-room.png"
-            alt="ユーザーアイコン"
-            width={32}
-            height={32}
-            className="mr-3"
-          />
+          <Image src="/no-meeting-room.png" alt="ユーザーアイコン" width={32} height={32} className="mr-3" />
           <h1 className="text-2xl font-bold">CtrlWin</h1>
         </div>
-
         <div className="flex items-center gap-4">
-          {/* ユーザ名 */}
           <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 border border-gray-300 shadow">
-            <Image
-              src="/user-icon.png"
-              alt="ユーザーアイコン"
-              width={32}
-              height={32}
-            />
+            <Image src="/user-icon.png" alt="ユーザーアイコン" width={32} height={32} />
             <span className="text-gray-700 font-bold">{userName}</span>
             <span className="text-gray-700 font-medium"> さん </span>
           </div>
-
           <button className="px-4 py-2 text-sm font-medium rounded-md bg-red-500 text-white hover:bg-red-600 transition">
             ログアウト
           </button>
@@ -71,12 +57,7 @@ export default function Vote() {
         <div className="flex w-full max-w-3xl min-h-[600px] bg-white rounded-2xl shadow-2xl border border-blue-100 overflow-hidden flex-col">
           {/* 議題名 */}
           <div className="px-8 pt-8 pb-4 border-b border-gray-100">
-            <label
-              htmlFor="title"
-              className="block text-lg font-bold mb-2 text-blue-700"
-            >
-              議題名
-            </label>
+            <label htmlFor="title" className="block text-lg font-bold mb-2 text-blue-700">議題名</label>
             <input
               id="title"
               name="title"
@@ -87,32 +68,29 @@ export default function Vote() {
             />
           </div>
 
-          {/* 投票フォーム */}
-          <form className="flex flex-col gap-8 px-8 py-8 overflow-y-auto">
+          {/* 投票フォーム（見た目だけ） */}
+          <form className="flex flex-col gap-8 px-8 py-8 overflow-y-auto" onSubmit={(e) => e.preventDefault()}>
             <label className="block text-lg font-bold mb-4 text-gray-700">
               AIが提案した案から1つ選んでください。
             </label>
+
             <div className="flex flex-col gap-6">
               {proposals.map((p) => (
                 <div key={p.value} className="flex flex-col gap-3">
                   <label
                     className={`flex items-center gap-4 px-5 py-4 rounded-xl border-2 cursor-pointer transition
-                      ${
-                        p.recommended
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200 bg-gray-50"
-                      }
+                      ${p.recommended ? "border-blue-500 bg-blue-50" : "border-gray-200 bg-gray-50"}
                       hover:border-blue-400 hover:bg-blue-100`}
                   >
                     <input
                       type="radio"
                       name="value"
                       value={p.value}
+                      checked={selected === p.value}
+                      onChange={() => setSelected(p.value)}
                       className="accent-blue-600 w-5 h-5"
                     />
-                    <span className="text-lg font-medium text-gray-800">
-                      {p.label}
-                    </span>
+                    <span className="text-lg font-medium text-gray-800">{p.label}</span>
                     {p.recommended && (
                       <span className="ml-auto px-3 py-1 bg-blue-600 text-white rounded-full text-xs font-bold shadow">
                         AIのおすすめ
@@ -120,35 +98,36 @@ export default function Vote() {
                     )}
                   </label>
 
-                  {/* メリット・デメリット表示 */}
+                  {/* メリット・デメリット */}
                   <div className="ml-10 flex flex-col gap-2 text-sm">
                     <div>
-                      <span className="font-semibold text-green-700">
-                        メリット：
-                      </span>
+                      <span className="font-semibold text-green-700">メリット：</span>
                       <ul className="list-disc list-inside text-gray-700">
-                        {p.pros.map((pro, i) => (
-                          <li key={i}>{pro}</li>
-                        ))}
+                        {p.pros.map((pro, i) => <li key={i}>{pro}</li>)}
                       </ul>
                     </div>
                     <div>
-                      <span className="font-semibold text-red-700">
-                        デメリット：
-                      </span>
+                      <span className="font-semibold text-red-700">デメリット：</span>
                       <ul className="list-disc list-inside text-gray-700">
-                        {p.cons.map((con, i) => (
-                          <li key={i}>{con}</li>
-                        ))}
+                        {p.cons.map((con, i) => <li key={i}>{con}</li>)}
                       </ul>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
+
             <div className="flex justify-end pt-4">
               <button
-                type="submit"
+                type="button"
+                onClick={() => {
+                  if (!selected) {
+                    alert("案を1つ選んでください");
+                    return;
+                  }
+                  const label = proposals.find(p => p.value === selected)?.label ?? selected;
+                  router.push(`/dashboard/voting/complete?choice=${encodeURIComponent(label)}`);
+                }}
                 className="px-10 py-3 rounded-lg bg-blue-600 text-white text-lg font-bold shadow hover:bg-blue-700 transition"
               >
                 投票する
