@@ -31,9 +31,6 @@ export default function AddProject() {
 };
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
-          {/* ヘッダー */}
-          <AppHeader />
-    
             {/* 議題追加フォームUI */}
             <main className="flex flex-1 justify-center items-center w-full">
               <div className="flex w-full max-w-4xl h-[330px] bg-white rounded-xl shadow-lg border overflow-hidden">

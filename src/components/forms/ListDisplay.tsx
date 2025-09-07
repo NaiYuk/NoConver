@@ -35,9 +35,6 @@ const topics = [
 export default function ListDisplay() {
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
-      {/* ヘッダー */}
-      <AppHeader />
-
       {/* タイトル一覧表示 */}
       <main className="flex flex-1 justify-center items-center w-full px-6 py-12 bg-gradient-to-b from-rose-50 to-white">
         <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border border-gray-200 p-10">
