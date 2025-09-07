@@ -1,11 +1,11 @@
-'use client';
-import App from "next/app";
+"use client";
+import { useState } from "react";
 import Image from "next/image";
 import AppHeader from "../AppHeader";
 
 const userName = "高魚 桐季"; // とりあえず仮データ
 
-export default function Opinion() {
+export default function OpinionComp() {
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
       {/* ヘッダー */}
@@ -59,21 +59,19 @@ export default function Opinion() {
                 htmlFor="content"
                 className="block text-lg font-bold mb-2 text-gray-700"
               >
-                意見を書く
+                あなたの意見
               </label>
-              <textarea
-                id="content"
-                name="content"
-                rows={4}
-                placeholder="あなたの意見を入力してください"
-                className="w-full rounded-md border border-gray-300 px-4 py-3 text-lg resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
-              />
+              {/* 自分の意見を表示 */}
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mt-2 text-blue-800 font-semibold">
+                とても良いアイデアだと思います！
+              </div>
               <div className="flex justify-end">
                 <button
-                  type="submit"
+                  type="button"
                   className="px-8 py-3 rounded-md bg-blue-600 text-white text-lg font-semibold hover:bg-blue-700 transition"
+                  // AIの結果表示の処理は必要に応じて追加
                 >
-                  送信
+                  AIの案を表示
                 </button>
               </div>
             </form>
@@ -83,4 +81,3 @@ export default function Opinion() {
     </div>
   );
 }
-

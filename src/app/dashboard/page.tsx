@@ -1,48 +1,24 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
-import Link from "next/link";
 
-export default function Home() {
-  const userName = "高魚 桐季";
-  const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<"menu" | "manual">("menu");
-  const [roomId, setRoomId] = useState("");
-  const [roomPass, setRoomPass] = useState("");
+import { query } from "@/lib/db";
+import AppHeader from "@/components/AppHeader";
+import AddProject from "@/components/forms/AddProject";
 
-  const closeOverlay = () => {
-    setOpen(false);
-    setMode("menu");
-    setRoomId("");
-    setRoomPass("");
-  };
+export default async function Home() {
+  const userId = 1; 
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // TODO: API 送信や画面遷移
-    console.log("join with:", { roomId, roomPass });
-    closeOverlay();
-  };
+  const rows = await query<{ name: string }>(
+    "SELECT name FROM users WHERE id = ?",
+    [userId]
+  );
+  const userName = rows[0]?.name ?? "ゲスト";
 
+  
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
       {/* ヘッダー */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-gray-300 shadow-sm bg-white/70 backdrop-blur-sm">
-        <div className="flex">
-          <Image src="/no-meeting-room.png" alt="ユーザーアイコン" width={32} height={32} className="mr-3" />
-          <h1 className="text-2xl font-bold">CtrlWin</h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 border border-gray-300 shadow">
-            <Image src="/user-icon.png" alt="ユーザーアイコン" width={32} height={32} />
-            <span className="text-gray-700 font-bold">{userName}</span>
-            <span className="text-gray-700 font-medium"> さん </span>
-          </div>
-          <button className="px-4 py-2 text-sm font-medium rounded-md bg-red-500 text-white hover:bg-red-600 transition">
-            ログアウト
-          </button>
-        </div>
-      </header>
+      <AppHeader />
 
       {/* メイン */}
       <main className="flex flex-1 justify-center items-center">

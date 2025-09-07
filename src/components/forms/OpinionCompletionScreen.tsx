@@ -1,7 +1,6 @@
-'use client';
-import App from "next/app";
+"use client";
+import { useState } from "react";
 import Image from "next/image";
-import AppHeader from "../AppHeader";
 
 const userName = "高魚 桐季"; // とりあえず仮データ
 
@@ -9,7 +8,36 @@ export default function Opinion() {
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
       {/* ヘッダー */}
-      <AppHeader />
+      <header className="flex items-center justify-between px-6 py-4 border-b border-gray-300 shadow-sm bg-white/70 backdrop-blur-sm">
+        <div className="flex">
+          <Image
+            src="/no-meeting-room.png"
+            alt="ユーザーアイコン"
+            width={32}
+            height={32}
+            className="mr-3"
+          />
+          <h1 className="text-2xl font-bold">CtrlWin</h1>
+        </div>
+
+        <div className="flex items-center gap-4">
+          {/* ユーザ名 */}
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 border border-gray-300 shadow">
+            <Image
+              src="/user-icon.png"
+              alt="ユーザーアイコン"
+              width={32}
+              height={32}
+            />
+            <span className="text-gray-700 font-bold">{userName}</span>
+            <span className="text-gray-700 font-medium"> さん </span>
+          </div>
+
+          <button className="px-4 py-2 text-sm font-medium rounded-md bg-red-500 text-white hover:bg-red-600 transition">
+            ログアウト
+          </button>
+        </div>
+      </header>
 
       {/* 議題フォームUI */}
       <main className="flex flex-1 justify-center items-center w-full">
@@ -59,21 +87,19 @@ export default function Opinion() {
                 htmlFor="content"
                 className="block text-lg font-bold mb-2 text-gray-700"
               >
-                意見を書く
+                あなたの意見
               </label>
-              <textarea
-                id="content"
-                name="content"
-                rows={4}
-                placeholder="あなたの意見を入力してください"
-                className="w-full rounded-md border border-gray-300 px-4 py-3 text-lg resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
-              />
+              {/* 自分の意見を表示 */}
+              <div className="bg-blue-50 border border-blue-200 rounded-md p-4 mt-2 text-blue-800 font-semibold">
+                とても良いアイデアだと思います！
+              </div>
               <div className="flex justify-end">
                 <button
-                  type="submit"
+                  type="button"
                   className="px-8 py-3 rounded-md bg-blue-600 text-white text-lg font-semibold hover:bg-blue-700 transition"
+                  // AIの結果表示の処理は必要に応じて追加
                 >
-                  送信
+                  AIの案を表示
                 </button>
               </div>
             </form>
@@ -83,4 +109,3 @@ export default function Opinion() {
     </div>
   );
 }
-

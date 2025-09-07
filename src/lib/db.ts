@@ -1,19 +1,35 @@
-// lib/db.ts
+// src/lib/db.ts
 import mysql from "mysql2/promise";
 
-let pool: mysql.Pool;
+// 開発時のHMRでコネクションを使い回す（推奨）
+declare global {
+  // eslint-disable-next-line no-var
+  var __mysqlPool: mysql.Pool | undefined;
+}
 
-export async function getDbConnection() {
-  if (!pool) {
-    pool = mysql.createPool({
-      host: process.env.DB_HOST,       // Cloud SQL の IP またはホスト名
-      user: process.env.DB_USER,       // DBユーザー
-      password: process.env.DB_PASS,   // パスワード
-      database: process.env.DB_NAME,   // DB名
+function getPool() {
+  if (!global.__mysqlPool) {
+    global.__mysqlPool = mysql.createPool({
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASS,   // ← 変数名は .env と合わせる
+      database: process.env.DB_NAME,
+      port: Number(process.env.DB_PORT ?? 3306),
       waitForConnections: true,
       connectionLimit: 10,
       queueLimit: 0,
     });
   }
-  return pool;
+  return global.__mysqlPool;
+}
+
+export async function getDbConnection() {
+  return getPool();
+}
+
+// ★ これを追加：簡単に使える query ラッパー
+export async function query<T = any>(sql: string, params?: any[]): Promise<T[]> {
+  const pool = getPool();
+  const [rows] = await pool.execute(sql, params);
+  return rows as T[];
 }

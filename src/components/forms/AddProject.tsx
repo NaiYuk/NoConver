@@ -1,41 +1,38 @@
 'use client';
 import Image from "next/image";
+import AppHeader from "../AppHeader";
+import { useState } from "react";
 
 const userName = "高魚 桐季"; // 仮のユーザー名
 export default function AddProject() {
+  const [inputTitle, setInputTitle] = useState('');
+  const [inputPass, setInputPass] = useState('');
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const owner_id = 1; // 仮ユーザーID
+    const res = await fetch('/api/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: inputTitle, owner_id, pass: inputPass })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert(`プロジェクト追加成功！ID: ${data.project_id}, list_id: ${data.list_id}`);
+      setInputTitle('');
+      setInputPass('');
+    } else {
+      alert(`追加失敗: ${data.error}`);
+    }
+  } catch (err) {
+    console.error(err);
+    alert('通信エラー');
+  }
+};
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
           {/* ヘッダー */}
-          <header className="flex items-center justify-between px-6 py-4 border-b border-gray-300 shadow-sm bg-white/70 backdrop-blur-sm">
-            <div className="flex">
-              <Image
-                src="/no-meeting-room.png"
-                alt="ユーザーアイコン"
-                width={32}
-                height={32}
-                className="mr-3"
-              />
-              <h1 className="text-2xl font-bold">CtrlWin</h1>
-            </div>
-    
-            <div className="flex items-center gap-4">
-              {/* ユーザ名 */}
-              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 border border-gray-300 shadow">
-                <Image
-                  src="/user-icon.png"
-                  alt="ユーザーアイコン"
-                  width={32}
-                  height={32}
-                />
-                <span className="text-gray-700 font-bold">{userName}</span>
-                <span className="text-gray-700 font-medium"> さん </span>
-              </div>
-    
-              <button className="px-4 py-2 text-sm font-medium rounded-md bg-red-500 text-white hover:bg-red-600 transition">
-                ログアウト
-              </button>
-            </div>
-          </header>
+          <AppHeader />
     
             {/* 議題追加フォームUI */}
             <main className="flex flex-1 justify-center items-center w-full">
