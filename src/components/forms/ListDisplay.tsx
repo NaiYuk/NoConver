@@ -37,6 +37,7 @@ export default function ListDisplay() {
     <div className="min-h-screen flex flex-col bg-rose-50">
       {/* ヘッダー */}
       <AppHeader />
+      
 
       {/* タイトル一覧表示 */}
       <main className="flex flex-1 justify-center items-center w-full px-6 py-12 bg-gradient-to-b from-rose-50 to-white">
