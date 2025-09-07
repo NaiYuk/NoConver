@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import Image from "next/image";
 import { useState } from "react";
+import App from "next/app";
+import AppHeader from "@/components/AppHeader";
 
 export default function Page() {
   const router = useRouter();
@@ -34,12 +36,7 @@ export default function Page() {
 
   return (
     <div className="min-h-dvh flex flex-col">
-      <header className="flex items-center justify-between px-6 py-4 border-b border-gray-300 shadow-sm bg-white/70 backdrop-blur-sm">
-        <div className="flex">
-          <Image src="/no-meeting-room.png" alt="ユーザーアイコン" width={32} height={32} className="mr-3" />
-          <h1 className="text-2xl font-bold">CtrlWin</h1>
-        </div>
-      </header>
+      <AppHeader />
 
       <div className="min-h-screen flex flex-col bg-rose-50">
         <main className="flex-1 grid place-items-center p-4">

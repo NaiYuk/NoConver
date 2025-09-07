@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { query } from "@/lib/db";
 import AppHeader from "@/components/AppHeader";
+import AddProject from "@/components/forms/AddProject";
 
 export default async function Home() {
   const userId = 1; 
