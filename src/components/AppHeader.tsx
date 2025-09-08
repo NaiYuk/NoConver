@@ -11,7 +11,7 @@ export default function AppHeader() {
     <header className="flex items-center justify-between px-6 py-4 border-b border-gray-300 shadow-sm bg-white/70 backdrop-blur-sm">
       <div className="flex">
         <Image src="/no-meeting-room.png" alt="ユーザーアイコン" width={32} height={32} className="mr-3" />
-        <h1 className="text-2xl font-bold">NøConver (プレゼン用)</h1>
+        <h1 className="text-2xl font-bold">NøConver</h1>
       </div>
 
       <div className="flex items-center gap-4">
