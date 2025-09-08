@@ -3,13 +3,16 @@
 
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { basename } from "path";
+type ProjectStatus = "意見収集中" | "投票中" | "可決済";
 
 type Project = {
   project_id: number;
   title: string;
   owner_id: number;
   owner_name?: string;
-  status: "意見収集中" | "投票中" | "可決済";
+  status: ProjectStatus;
   list_id: string;
   create_at?: string; 
 };
@@ -18,11 +21,24 @@ export default function ProjectRow({ p, onStatusChanged }: {
   p: Project;
   onStatusChanged: (projectId: number, next: Project["status"]) => void;
 }) {
+  const router = useRouter();
   const { data: session } = useSession();
   const myId = Number(session?.user?.id);
   const isOwner = myId === p.owner_id;
 
   const [loading, setLoading] = useState<"vote" | "approve" | null>(null);
+  const pathByStatus = (status: ProjectStatus) => {
+    switch (status){
+      case "意見収集中": return `/dashboard/opinion`;
+      case "投票中": return `/dashboard/voting`;
+      case "可決済": return `/dashboard/approved`;
+    }
+  };
+
+  const handleClick = () => {
+    const base = pathByStatus(p.status);
+    router.push(`${base}?project_id=${p.project_id}?list_id=${encodeURIComponent(p.list_id)}`);
+  }
 
   const toVoting = async () => {
     try {
@@ -71,7 +87,12 @@ export default function ProjectRow({ p, onStatusChanged }: {
   const disableApprove= !isOwner || p.status !== "投票中"     || !!loading;
 
   return (
-    <div className="flex flex-col gap-2 px-6 py-5 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition cursor-pointer shadow-sm">
+    <div className="flex flex-col gap-2 px-6 py-5 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition cursor-pointer shadow-sm"
+      role="button"
+      tabIndex={0}
+      onClick={handleClick}
+      onKeyDown={(e) => (e.key === 'Enter' ?  handleClick() : null)}
+      >
       <div className="min-w-0">
         <div className="font-semibold truncate">{p.title}</div>
         <div className="text-sm text-gray-500 flex flex-col sm:flex-row sm:gap-4">

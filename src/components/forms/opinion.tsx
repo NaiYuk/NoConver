@@ -8,11 +8,8 @@ const userName = "高魚 桐季"; // とりあえず仮データ
 export default function Opinion() {
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
-      {/* ヘッダー */}
-      <AppHeader />
-
       {/* 議題フォームUI */}
-      <main className="flex flex-1 justify-center items-center w-full">
+      <main className="flex flex-1 justify-center items-center w-full px-6">
         <div className="flex w-full max-w-6xl h-[600px] bg-white rounded-xl shadow-lg border overflow-hidden">
           {/* 左側：意見一覧 */}
           <aside className="w-1/3 bg-gray-50 border-r flex flex-col p-6 overflow-y-auto">

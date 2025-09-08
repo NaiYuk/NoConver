@@ -1,7 +1,7 @@
 "use client";
-import App from "next/app";
-import Image from "next/image";
 import AppHeader from "../AppHeader";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 export const userName = "高魚 桐季"; // とりあえず仮データ
 const proposals = [
@@ -29,7 +29,6 @@ const proposals = [
 ];
 
 export default function Vote() {
-  const router = useRouter();                 // ✅ フックは関数内で
   const [selected, setSelected] = useState<string | null>(null);
 
   return (
@@ -111,7 +110,6 @@ export default function Vote() {
                     return;
                   }
                   const label = proposals.find(p => p.value === selected)?.label ?? selected;
-                  router.push(`/dashboard/voting/complete?choice=${encodeURIComponent(label)}`);
                 }}
                 className="px-10 py-3 rounded-lg bg-blue-600 text-white text-lg font-bold shadow hover:bg-blue-700 transition"
               >
