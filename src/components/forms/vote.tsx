@@ -1,6 +1,5 @@
 "use client";
 import AppHeader from "../AppHeader";
-import { useRouter } from "next/router";
 import { useState } from "react";
 
 export const userName = "高魚 桐季"; // とりあえず仮データ
@@ -33,9 +32,6 @@ export default function Vote() {
 
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
-      {/* ヘッダー */}
-      <AppHeader />
-
       {/* 投票フォームUI */}
       <main className="flex flex-1 justify-center items-center w-full px-6 py-10">
         <div className="flex w-full max-w-3xl min-h-[600px] bg-white rounded-2xl shadow-2xl border border-blue-100 overflow-hidden flex-col">
