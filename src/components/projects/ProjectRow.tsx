@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { basename } from "path";
+import PasswordModal from "../PasswordModal";
 type ProjectStatus = "意見収集中" | "投票中" | "可決済";
 
 type Project = {
@@ -19,12 +19,15 @@ type Project = {
 
 export default function ProjectRow({ p, onStatusChanged }: {
   p: Project;
-  onStatusChanged: (projectId: number, next: Project["status"]) => void;
+  onStatusChanged: (projectId: number, next: ProjectStatus) => void;
 }) {
   const router = useRouter();
   const { data: session } = useSession();
   const myId = Number(session?.user?.id);
   const isOwner = myId === p.owner_id;
+  const [modalOpen, setModalOpen] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [modalError, setModalError] = useState<string | null>(null);
 
   const [loading, setLoading] = useState<"vote" | "approve" | null>(null);
   const pathByStatus = (status: ProjectStatus) => {
@@ -35,10 +38,47 @@ export default function ProjectRow({ p, onStatusChanged }: {
     }
   };
 
+  const go = (base: string) => {
+    router.push(`${base}?project_id=${p.project_id}&list_id=${p.list_id}`);
+  };
+
   const handleClick = () => {
-    const base = pathByStatus(p.status);
-    router.push(`${base}?project_id=${p.project_id}?list_id=${encodeURIComponent(p.list_id)}`);
-  }
+    if (p.status === '意見収集中') {
+      setModalError(null);
+      setModalOpen(true);
+    } else {
+      go(pathByStatus(p.status));
+    }
+  };
+
+  const verifyAndGo = async (pass: string) => {
+    try {
+      setVerifying(true);
+      setModalError(null);
+      const res = await fetch('/api/projects/verify-pass', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          project_id: p.project_id,
+          list_id: p.list_id,
+          pass,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data?.ok) {
+        setModalError('パスワードが違います');
+        setVerifying(false);
+        return;
+      }
+      setModalOpen(false);
+      go('/dashboard/opinion');
+    } catch (e) {
+      console.error(e);
+      setModalError('検証に失敗しました');
+    } finally {
+      setVerifying(false);
+    }
+  };
 
   const toVoting = async () => {
     try {
@@ -87,6 +127,7 @@ export default function ProjectRow({ p, onStatusChanged }: {
   const disableApprove= !isOwner || p.status !== "投票中"     || !!loading;
 
   return (
+    <>
     <div className="flex flex-col gap-2 px-6 py-5 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100 transition cursor-pointer shadow-sm"
       role="button"
       tabIndex={0}
@@ -145,5 +186,13 @@ export default function ProjectRow({ p, onStatusChanged }: {
         </span>
       </div>
     </div>
+    <PasswordModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={verifyAndGo}
+        loading={verifying}
+        errorMessage={modalError}
+      />
+    </>
   );
 }
