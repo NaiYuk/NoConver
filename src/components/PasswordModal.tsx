@@ -24,9 +24,9 @@ export default function PasswordModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/40">
-      <div className="w-full max-w-sm rounded-xl bg-white p-5 shadow-xl border">
-        <h3 className="text-lg font-semibold mb-3">議題パスワード</h3>
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/40" onClick={onClose}>
+      <div className="w-full max-w-sm rounded-xl bg-white p-5 shadow-xl">
+        <h3 className="text-lg text-blue-800 font-semibold mb-3">議題パスワード</h3>
         <form onSubmit={submit} className="space-y-3">
           <input
             type="password"
@@ -44,7 +44,7 @@ export default function PasswordModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-md border bg-white hover:bg-gray-50"
+              className="px-4 py-2 rounded-md bg-rose-300 text-white hover:bg-rose-400 disabled:opacity-60 mr-[10px]"
               disabled={loading}
             >
               キャンセル
