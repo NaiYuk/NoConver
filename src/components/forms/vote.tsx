@@ -1,7 +1,6 @@
 "use client";
-import App from "next/app";
-import Image from "next/image";
 import AppHeader from "../AppHeader";
+import { useState } from "react";
 
 export const userName = "高魚 桐季"; // とりあえず仮データ
 const proposals = [
@@ -29,14 +28,10 @@ const proposals = [
 ];
 
 export default function Vote() {
-  const router = useRouter();                 // ✅ フックは関数内で
   const [selected, setSelected] = useState<string | null>(null);
 
   return (
     <div className="min-h-screen flex flex-col bg-rose-50">
-      {/* ヘッダー */}
-      <AppHeader />
-
       {/* 投票フォームUI */}
       <main className="flex flex-1 justify-center items-center w-full px-6 py-10">
         <div className="flex w-full max-w-3xl min-h-[600px] bg-white rounded-2xl shadow-2xl border border-blue-100 overflow-hidden flex-col">
@@ -111,7 +106,6 @@ export default function Vote() {
                     return;
                   }
                   const label = proposals.find(p => p.value === selected)?.label ?? selected;
-                  router.push(`/dashboard/voting/complete?choice=${encodeURIComponent(label)}`);
                 }}
                 className="px-10 py-3 rounded-lg bg-blue-600 text-white text-lg font-bold shadow hover:bg-blue-700 transition"
               >
