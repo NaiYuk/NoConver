@@ -12,8 +12,9 @@ function getPool() {
     global.__mysqlPool = mysql.createPool({
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
-      password: process.env.DB_PASS,   // ← 変数名は .env と合わせる
+      password: process.env.DB_PASS,
       database: process.env.DB_NAME,
+      timezone: '+09:00',
       port: Number(process.env.DB_PORT ?? 3306),
       waitForConnections: true,
       connectionLimit: 10,
@@ -27,7 +28,6 @@ export async function getDbConnection() {
   return getPool();
 }
 
-// ★ これを追加：簡単に使える query ラッパー
 export async function query<T = any>(sql: string, params?: any[]): Promise<T[]> {
   const pool = getPool();
   const [rows] = await pool.execute(sql, params);

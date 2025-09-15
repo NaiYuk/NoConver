@@ -43,7 +43,7 @@ export default function ProjectRow({ p, onStatusChanged }: {
   };
 
   const handleClick = () => {
-    if (p.status === '意見収集中') {
+    if (p.status === '意見収集中' && p.owner_id !== myId ) {
       setModalError(null);
       setModalOpen(true);
     } else {
@@ -137,16 +137,16 @@ export default function ProjectRow({ p, onStatusChanged }: {
       <div className="min-w-0">
         <div className="font-semibold truncate">{p.title}</div>
         <div className="text-sm text-gray-500 flex flex-col sm:flex-row sm:gap-4">
-          ID: <span className="font-mono">{p.list_id}</span>
+          <span className="font-mono">ID: {p.list_id}</span>
           {p.owner_name ? ` 作成者: ${p.owner_name}` : ""}
           {isOwner ? "(あなたが作成者です)" : ""}
-          <span>{p.create_at ? ` 作成日時: ${new Date(p.create_at).toLocaleString()}` : ""}</span>
+          <span>{p.create_at ? ` 作成日時: ${new Date(p.create_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}` : ""}</span>
         </div>
       </div>
       <hr />
       <div className="flex items-center gap-3 pt-2">
         {/* アクションボタン */}
-        <div className="flex gap-2">
+        <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={toVoting}
             disabled={disableVote}

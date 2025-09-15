@@ -25,7 +25,8 @@ export default function PasswordModal({
 
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/40" onClick={onClose}>
-      <div className="w-full max-w-sm rounded-xl bg-white p-5 shadow-xl">
+      <div className="w-full max-w-sm rounded-xl bg-white p-5 shadow-xl"
+      onClick={(e) => e.stopPropagation()}>
         <h3 className="text-lg text-blue-800 font-semibold mb-3">議題パスワード</h3>
         <form onSubmit={submit} className="space-y-3">
           <input

@@ -1,9 +1,4 @@
 'use client';
-import App from "next/app";
-import Image from "next/image";
-import AppHeader from "../AppHeader";
-
-const userName = "高魚 桐季"; // とりあえず仮データ
 
 export default function Opinion() {
   return (
