@@ -29,7 +29,7 @@ export default function ProjectRow({ p, onStatusChanged }: {
   const [verifying, setVerifying] = useState(false);
   const [modalError, setModalError] = useState<string | null>(null);
 
-  const [loading, setLoading] = useState<"vote" | "approve" | null>(null);
+  const [loading, setLoading] = useState<"vote" | "fetch-opinions" | "analyzing" | "saving" | "publishing" | "approve" | null>(null);
   const pathByStatus = (status: ProjectStatus) => {
     switch (status){
       case "意見収集中": return `/dashboard/opinion`;
@@ -37,6 +37,7 @@ export default function ProjectRow({ p, onStatusChanged }: {
       case "可決済": return `/dashboard/approved`;
     }
   };
+
 
   const go = (base: string) => {
     router.push(`${base}?project_id=${p.project_id}&list_id=${p.list_id}`);
@@ -82,25 +83,85 @@ export default function ProjectRow({ p, onStatusChanged }: {
 
   const toVoting = async () => {
     try {
-      setLoading("vote");
-      // 事前ガード（UI側）
-      if (!isOwner || p.status !== "意見収集中") return;
+      setLoading('analyzing'); 
 
-      const res = await fetch("/api/projects", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ project_id: p.project_id, next: "投票中" }),
+      if (!isOwner || p.status !== '意見収集中') {
+        throw new Error('権限がないか、現在の状態で実行できません');
+      }
+
+      // 1) 意見取得
+      const opRes = await fetch(`/api/projects/${p.project_id}/opinions`);
+      const opJson = await opRes.json();
+      if (!opRes.ok) throw new Error(opJson?.error ?? '意見取得に失敗');
+      const opinions: string[] = (opJson.items ?? [])
+        .map((o: any) => (typeof o.text === 'string' ? o.text.trim() : ''))
+        .filter((s: string) => s.length > 0);
+
+      if (opinions.length === 0) {
+        throw new Error('有効な意見がありません');
+      }
+
+      // 2) 分析
+      const anRes = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: p.title, opinions })
       });
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data?.error ?? "更新失敗");
+      const anJson = await anRes.json();
+      if (!anRes.ok) throw new Error(anJson?.error ?? '分析に失敗しました');
 
-      onStatusChanged(p.project_id, "投票中"); // 楽観更新
+      // 3) 案を保存（draft）
+      setLoading('saving');
+      const idempotencyKey =
+      (typeof crypto !== 'undefined' && 'randomUUID' in crypto)
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random()}`;
+      const saveRes = await fetch(`/api/projects/${p.project_id}/options/bulk-upsert`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-idempotency-key': idempotencyKey,
+        },
+        body: JSON.stringify({
+          options: anJson.analysis.解決策候補.map((o: any, i: number) => ({
+            title: o['案の名前'],
+            description: `自動生成案`,
+            merit: o['メリット'],
+            demerit: o['デメリット'],
+            ai_recommended: !!o['推奨'],
+            created_from: 'auto',
+            status: 'draft',
+            display_order: i + 1
+          }))
+        })
+      });
+      const saveJson = await saveRes.json();
+      if (!saveRes.ok || !saveJson?.ok) throw new Error(saveJson?.error ?? '案の保存に失敗');
+
+      // 4) 公開（draft -> published）
+      setLoading('publishing');
+      const pubOptions = await fetch(`/api/projects/${p.project_id}/options/publish`, { method: 'PATCH' });
+      const pubOptionsJson = await pubOptions.json();
+      if (!pubOptions.ok || !pubOptionsJson?.ok) throw new Error(pubOptionsJson?.error ?? '案の公開に失敗');
+
+      // 5) サーバ状態を「投票中」へ
+      const pubProject = await fetch('/api/projects', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_id: p.project_id, next: '投票中' })
+      });
+      const pubProjectJson = await pubProject.json();
+      if (!pubProject.ok || !pubProjectJson?.success) throw new Error(pubProjectJson?.error ?? '投票開始に失敗');
+
+      onStatusChanged(p.project_id, '投票中');
     } catch (e: any) {
-      alert(e.message ?? "更新に失敗しました");
+      alert(e?.message ?? '更新に失敗しました');
     } finally {
       setLoading(null);
     }
   };
+
+
 
   const toApproved = async () => {
     try {

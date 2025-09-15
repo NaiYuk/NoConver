@@ -1,7 +1,8 @@
 // src/lib/db.ts
 import mysql from "mysql2/promise";
 
-// 開発時のHMRでコネクションを使い回す（推奨）
+// 開発時のHMRでコネクションを使い回すためにグローバル変数に保存する
+// 本番環境では常に新規作成されるので問題ない
 declare global {
   // eslint-disable-next-line no-var
   var __mysqlPool: mysql.Pool | undefined;
