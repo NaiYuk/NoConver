@@ -2,7 +2,11 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { query } from "@/lib/db";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
+
+// Credentials プロバイダの検証では /api/users などと同じ bcryptjs を利用する。
+// bcrypt (ネイティブ) と bcryptjs を混在させると、実行環境によっては
+// ハッシュ照合が失敗して authorize が null を返し 401 になるケースがある。
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt" },
